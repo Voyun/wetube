@@ -1,0 +1,10 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env",{
+                "useBuiltlns" : "entry",
+                "corejs":3
+            }
+        ]
+    ]
+}
