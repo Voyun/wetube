@@ -2,7 +2,7 @@
     "presets": [
         [
             "@babel/preset-env",{
-                "useBuiltlns" : "entry",
+                "useBuiltIns" : "entry",
                 "corejs":3
             }
         ]
