@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 import userRouter  from "./routers/userRouter"; 
 import videoRouter from "./routers/videoRouter";
 import globalRouter from "./routers/globalRouter";
+import routes from "./routes";
 const app = express();
 
 app.use(cookieParser());
@@ -15,8 +16,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(helmet());
 app.use(morgan("dev"));
 
-app.use("/", globalRouter); // join login search home 이런것을 다룰 url 
-app.use("/user", userRouter);
-app.use("/video", videoRouter);
+app.use(routes.home, globalRouter); // join login search home 이런것을 다룰 url 
+app.use(routes.users, userRouter);
+app.use(routes.videos, videoRouter);
 
 export default app; 
