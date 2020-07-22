@@ -1,13 +1,17 @@
+import {videos} from "../db"
+
 // Global Router
-export const home = (req, res) => 
- res.render("home", {pageTitle: "Home"}) ;
+export const home = (req, res) => {
+  res.render("home", {pageTitle: "Home", videos});
+};
+
 export const search = (req, res) => {
   //const searchingBy = console.log(req.query.term);
   const {
     query: { term: searchingBy}
   } = req;
-  res.render("search", {pageTitle: "Search", searchingBy});
-}
+  res.render("search", {pageTitle: "Search", searchingBy, videos});
+};
 // Video Router
 export const upload = (req, res) => 
   res.render("upload", {pageTitle: "Upload"});
