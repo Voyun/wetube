@@ -1,5 +1,5 @@
-import {videos} from "../db"
 import routes from "../routes"
+import Video from "../models/Video";
 
 // Global Router
 export const home = (req, res) => {
