@@ -2,8 +2,17 @@ import routes from "../routes"
 import Video from "../models/Video";
 
 // Global Router
-export const home = (req, res) => {
-  res.render("home", {pageTitle: "Home", videos});
+// async : 너를 기다려줌// 기본적으로 자바스크립트는 기다려주지 않음.
+// 예를 들어 Video를 확인해보라고 하면 확인하지만 끝나기를 기다리지 않음. 바로 다음으로 넘어감
+export const home = async (req, res) => {
+  try{
+    const videos = await Video.find({});
+    console.log(videos);
+    res.render("home", {pageTitle: "Home", videos});
+  } catch(error){
+    console.log(error);
+    res.render("home", {pageTitle: "Home", videos: [] });
+  }
 };
 
 export const search = (req, res) => {
