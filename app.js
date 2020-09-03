@@ -21,6 +21,7 @@ const app = express();
 */
 app.use(helmet());
 app.set("view engine","pug");  // view engine 설정값을 pug으로 바꿈
+app.use("/uploads", express.static("uploads"));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
