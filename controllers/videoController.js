@@ -1,64 +1,104 @@
-import routes from "../routes"
+import routes from "../routes";
 import Video from "../models/Video";
 
 // Global Router
 // async : 너를 기다려줌// 기본적으로 자바스크립트는 기다려주지 않음.
 // 예를 들어 Video를 확인해보라고 하면 확인하지만 끝나기를 기다리지 않음. 바로 다음으로 넘어감
 export const home = async (req, res) => {
-  try{
-    const videos = await Video.find({});
+  try {
+    const videos = await Video.find({}).sort({ _id: -1 });
     console.log(videos);
-    res.render("home", {pageTitle: "Home", videos});
-  } catch(error){
+    res.render("home", { pageTitle: "Home", videos });
+  } catch (error) {
     console.log(error);
-    res.render("home", {pageTitle: "Home", videos: [] });
+    res.render("home", { pageTitle: "Home", videos: [] });
   }
 };
 
-export const search = (req, res) => {
+export const search = async (req, res) => {
   //const searchingBy = console.log(req.query.term);
   const {
-    query: { term: searchingBy}
+    query: { term: searchingBy },
   } = req;
-  res.render("search", {pageTitle: "Search", searchingBy, videos});
+  let videos = [];
+  try {
+    videos = await Video.find({
+      title: { $regex: searchingBy, $options: "i" },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+  res.render("search", { pageTitle: "Search", searchingBy, videos });
 };
 // Video Router
-export const getUpload = (req, res) => 
-  res.render("upload", {pageTitle: "Upload"});
+export const getUpload = (req, res) =>
+  res.render("upload", { pageTitle: "Upload" });
 
 export const postUpload = async (req, res) => {
   const {
-      body : { title, description },
-      file : { path }
-    } = req;
-    
-  // To Do : Upload and save Video 
-    const newVideo = await Video.create({
-      fileUrl: path,
-      title,
-      description
-    });
+    body: { title, description },
+    file: { path },
+  } = req;
 
-    console.log(newVideo);
+  // To Do : Upload and save Video
+  const newVideo = await Video.create({
+    fileUrl: path,
+    title,
+    description,
+  });
+
+  console.log(newVideo);
 
   res.redirect(routes.videoDetail(newVideo.id));
 };
 
-
 export const videoDetail = async (req, res) => {
-  const{
-    params: { id }
+  const {
+    params: { id },
   } = req;
-  try{
+  try {
     const video = await Video.findById(id);
-    res.render("videoDetail", {pageTitle: "Video Detail", video});
-  } catch (error){
+    res.render("videoDetail", { pageTitle: video.title, video });
+  } catch (error) {
     res.redirect(routes.home);
   }
 };
 
-export const editVideo = (req, res) =>
-  res.render("editVideo", {pageTitle: "Edit Video"});
+export const geteditVideo = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
 
-export const deleteVideo = (req, res) => 
-  res.render("deleteVideo", {pageTitle: "Delete Video"});
+  try {
+    const video = await Video.findById(id);
+    res.render("editVideo", { pageTitle: `Edit ${video.title}`, video });
+  } catch (error) {
+    console.log(error);
+    res.redirect(routes.home);
+  }
+};
+
+export const postEditVideo = async (req, res) => {
+  const {
+    params: { id },
+    body: { title, description },
+  } = req;
+  try {
+    await Video.findOneAndUpdate({ _id: id }, { title, description });
+    res.redirect(routes.videoDetail(id));
+  } catch (error) {
+    res.redirect(routes.home);
+  }
+};
+
+export const deleteVideo = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  try {
+    await Video.findOneAndRemove({ _id: id });
+  } catch (error) {
+    console.log(error);
+  }
+  res.redirect(routes.home);
+};
