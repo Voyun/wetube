@@ -5,11 +5,15 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
+import passport from "passport";
+import session from "express-session";
 import { localsMiddleware } from "./middlewares";
 import routes from "./routes";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 import globalRouter from "./routers/globalRouter";
+
+import "./passport";
 
 const app = express();
 /*
@@ -19,6 +23,9 @@ const app = express();
     html 파일을 저장해야 하는 폴더의 기본 값은 프로젝트 작업 디렉토리+'/views'임
 
 */
+
+//console.log(process.env.COOKIE_SECRET);
+
 app.use(helmet());
 app.set("view engine", "pug"); // view engine 설정값을 pug으로 바꿈
 app.use("/uploads", express.static("uploads"));
@@ -27,6 +34,15 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("dev"));
+app.use(
+  session({
+    secret: process.env.COOKIE_SECRET,
+    resave: true,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 /* local 미들웨어 설정 방식 3가지
 app.use((req, res, next) => {
