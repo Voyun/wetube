@@ -1,6 +1,7 @@
 import passport from "passport";
 import routes from "../routes";
 import User from "../models/User";
+import { reset } from "nodemon";
 
 ///Global Router
 export const getJoin = (req, res) => {
@@ -40,14 +41,49 @@ export const postLogin = passport.authenticate("local", {
   successRedirect: routes.home,
 });
 
+export const githubLogin = passport.authenticate("github");
+
+export const githubLoginCallback = async (_, __, profile, cb) => {
+  const {
+    _json: { id, avatar_url, name, email },
+  } = profile;
+  try {
+    const user = await User.findOne({ email: email });
+    if (user) {
+      user.githubID = id;
+      user.save();
+      return cb(null, user);
+    }
+    const newUser = await User.create({
+      email,
+      name,
+      githubId: id,
+      avatarUrl: avatar_url,
+    });
+    return cb(null, newUser);
+  } catch (error) {
+    return cb(error);
+  }
+};
+
+export const postGithubLogIn = (req, res) => {
+  res.redirect(routes.home);
+};
+
 export const logout = (req, res) => {
   // To Do : Process Log Out
+  req.logout();
   res.redirect(routes.home);
 };
 
 //User Router
+
+export const getMe = (req, res) => {
+  res.render("userDetail", { pageTitle: "User Detail", user: req.user });
+}; // 사용자 찾는 과정 필요 없이 user을 바로 req.user로 전달
+
 export const userDetail = (req, res) =>
-  res.render("userDetail", { pageTitle: "User Detail" });
+  res.render("userDetail", { pageTitle: "User Detail" }); // 사용자 찾는 과정 필요
 export const editProfile = (req, res) =>
   res.render("editProfile", { pageTitle: "Edit Profile" });
 export const changePassword = (req, res) =>
