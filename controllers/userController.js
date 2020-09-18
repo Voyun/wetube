@@ -70,6 +70,16 @@ export const postGithubLogIn = (req, res) => {
   res.redirect(routes.home);
 };
 
+export const facebookLogin = passport.authenticate("facebook");
+
+export const facebookLoginCallback = (_, __, profile, cb) => {
+  console.log(_, __, profile, cb);
+};
+
+export const postFacebookLogin = (req, res) => {
+  res.redirect(routes.home);
+};
+
 export const logout = (req, res) => {
   // To Do : Process Log Out
   req.logout();
@@ -82,8 +92,18 @@ export const getMe = (req, res) => {
   res.render("userDetail", { pageTitle: "User Detail", user: req.user });
 }; // 사용자 찾는 과정 필요 없이 user을 바로 req.user로 전달
 
-export const userDetail = (req, res) =>
-  res.render("userDetail", { pageTitle: "User Detail" }); // 사용자 찾는 과정 필요
+export const userDetail = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  try {
+    const user = await User.findById(id);
+    res.render("userDetail", { pageTitle: "User Detail", user });
+  } catch (error) {
+    res.redirect(routes.home);
+  }
+};
+// 사용자 찾는 과정 필요
 export const editProfile = (req, res) =>
   res.render("editProfile", { pageTitle: "Edit Profile" });
 export const changePassword = (req, res) =>
