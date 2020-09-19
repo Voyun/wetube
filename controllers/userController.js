@@ -1,7 +1,7 @@
 import passport from "passport";
 import routes from "../routes";
 import User from "../models/User";
-import { reset } from "nodemon";
+//import { reset } from "nodemon";
 
 ///Global Router
 export const getJoin = (req, res) => {
@@ -44,6 +44,7 @@ export const postLogin = passport.authenticate("local", {
 export const githubLogin = passport.authenticate("github");
 
 export const githubLoginCallback = async (_, __, profile, cb) => {
+  console.log(id, avatar_url, name, email);
   const {
     _json: { id, avatar_url, name, email },
   } = profile;
@@ -89,6 +90,7 @@ export const logout = (req, res) => {
 //User Router
 
 export const getMe = (req, res) => {
+  console.log("GetME USER: " + req.user._id);
   res.render("userDetail", { pageTitle: "User Detail", user: req.user });
 }; // 사용자 찾는 과정 필요 없이 user을 바로 req.user로 전달
 
@@ -97,6 +99,7 @@ export const userDetail = async (req, res) => {
     params: { id },
   } = req;
   try {
+    console.log("userDetail id : " + id);
     const user = await User.findById(id);
     res.render("userDetail", { pageTitle: "User Detail", user });
   } catch (error) {
@@ -104,7 +107,48 @@ export const userDetail = async (req, res) => {
   }
 };
 // 사용자 찾는 과정 필요
-export const editProfile = (req, res) =>
+export const getEditProfile = (req, res) =>
   res.render("editProfile", { pageTitle: "Edit Profile" });
-export const changePassword = (req, res) =>
+
+export const postEditProfile = async (req, res) => {
+  const {
+    body: { name, email },
+    file,
+  } = req;
+
+  try {
+    await User.findByIdAndUpdate(req.user._id, {
+      name,
+      email,
+      avatarUrl: file ? `/${file.path}` : req.user.avatarUrl,
+    });
+    res.redirect(routes.me);
+  } catch (error) {
+    console.log(error);
+    res.redirect(routes.editProfile);
+  }
+};
+
+export const getChangePassword = (req, res) =>
   res.render("changePassword", { pageTitle: "Change Password" });
+
+export const postChangePassword = async (req, res) => {
+  const {
+    body: { oldPassword, newPassword, newPassword1 },
+  } = req;
+
+  try {
+    if (newPassword !== newPassword1) {
+      res.status(400);
+      res.redirect(`/users${routes.changePassword}`);
+      return;
+    }
+    const user = await User.findById(req.user._id);
+    await user.changePassword(oldPassword, newPassword);
+    user.save();
+    res.redirect(routes.me);
+  } catch (error) {
+    res.status(400);
+    res.redirect(`/users${routes.changePassword}`);
+  }
+};

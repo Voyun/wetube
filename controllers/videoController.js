@@ -1,5 +1,6 @@
 import routes from "../routes";
 import Video from "../models/Video";
+import User from "../models/User";
 
 // Global Router
 // async : 너를 기다려줌// 기본적으로 자바스크립트는 기다려주지 않음.
@@ -45,7 +46,12 @@ export const postUpload = async (req, res) => {
     fileUrl: path,
     title,
     description,
+    creator: req.user._id,
   });
+
+  const user = await User.findById(req.user._id);
+  user.videos.push(newVideo.id);
+  user.save();
 
   console.log(newVideo);
 
@@ -57,7 +63,8 @@ export const videoDetail = async (req, res) => {
     params: { id },
   } = req;
   try {
-    const video = await Video.findById(id);
+    const video = await Video.findById(id).populate("creator");
+    console.log(video);
     res.render("videoDetail", { pageTitle: video.title, video });
   } catch (error) {
     res.redirect(routes.home);
