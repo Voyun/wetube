@@ -44,7 +44,7 @@ export const postLogin = passport.authenticate("local", {
 export const githubLogin = passport.authenticate("github");
 
 export const githubLoginCallback = async (_, __, profile, cb) => {
-  console.log(id, avatar_url, name, email);
+  //console.log(id, avatar_url, name, email);
   const {
     _json: { id, avatar_url, name, email },
   } = profile;
@@ -90,7 +90,7 @@ export const logout = (req, res) => {
 //User Router
 
 export const getMe = (req, res) => {
-  console.log("GetME USER: " + req.user._id);
+  //console.log("GetME USER: " + req.user._id);
   res.render("userDetail", { pageTitle: "User Detail", user: req.user });
 }; // 사용자 찾는 과정 필요 없이 user을 바로 req.user로 전달
 
@@ -99,8 +99,8 @@ export const userDetail = async (req, res) => {
     params: { id },
   } = req;
   try {
-    console.log("userDetail id : " + id);
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate("videos");
+    console.log("userDetail user : " + user);
     res.render("userDetail", { pageTitle: "User Detail", user });
   } catch (error) {
     res.redirect(routes.home);
