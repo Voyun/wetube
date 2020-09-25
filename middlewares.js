@@ -7,7 +7,7 @@ const multerAvatar = multer({ dest: "uploads/avatars/" });
 export const localsMiddleware = (req, res, next) => {
   res.locals.siteName = "Wetube";
   res.locals.routes = routes;
-  res.locals.loggedUser = req.user || null || {};
+  res.locals.loggedUser = req.user || null;
   // console.log(req.user);
 
   next();
@@ -23,10 +23,10 @@ export const onlyPublic = (req, res, next) => {
 
 export const onlyPrivate = (req, res, next) => {
   if (req.user) {
-    console.log("req.user : " + req.user.id);
+    console.log("req.user : " + req.user._id);
     next();
   } else {
-    console.log("req.user : " + req.user.id);
+    console.log("req.user : " + req.user._id);
     res.redirect(routes.home);
   }
 };
