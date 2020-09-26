@@ -441,7 +441,7 @@ input[type="submit"] {
     bottom: 5px;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    padding: 10px;
+    padding: 8px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     font-size: 18px; }
