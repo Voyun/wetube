@@ -1,6 +1,7 @@
 import routes from "../routes";
 import Video from "../models/Video";
 import User from "../models/User";
+import Comment from "../models/Comment";
 
 // Global Router
 // async : 너를 기다려줌// 기본적으로 자바스크립트는 기다려주지 않음.
@@ -63,7 +64,9 @@ export const videoDetail = async (req, res) => {
     params: { id },
   } = req;
   try {
-    const video = await Video.findById(id).populate("creator");
+    const video = await Video.findById(id)
+      .populate("creator")
+      .populated("comment");
     //console.log(video);
     res.render("videoDetail", { pageTitle: video.title, video });
   } catch (error) {
@@ -131,6 +134,30 @@ export const postRegisterView = async (req, res) => {
     video.views = video.views + 1;
     video.save();
     res.status(200);
+  } catch (error) {
+    res.status(400);
+  } finally {
+    res.end();
+  }
+};
+
+// Add Comment
+
+export const postAddComment = async (req, res) => {
+  const {
+    params: { id },
+    body: { comment },
+    user,
+  } = req;
+
+  try {
+    const video = await Video.findById(id);
+    const newComment = await Comment.create({
+      text: comment,
+      creator: user.id,
+    });
+    video.comments.push(newComment.id);
+    video.save();
   } catch (error) {
     res.status(400);
   } finally {
