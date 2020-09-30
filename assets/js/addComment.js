@@ -26,7 +26,9 @@ const sendComment = async (comment) => {
       comment,
     },
   });
-  console.log(response);
+  if (response.status === 200) {
+    addComment(comment);
+  }
 };
 
 const handleSubmit = (event) => {
