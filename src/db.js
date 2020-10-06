@@ -4,7 +4,7 @@ dotenv.config();
 
 // dotenv : 데이터베이스에서 어떤 부분을 숨겨놓고 싶을 때 사용
 
-mongoose.connect(process.env.MONGO_URL, {
+mongoose.connect(process.env.MONGO_URL_PROD, {
   useNewUrlParser: true,
   useFindAndModify: false,
   useUnifiedTopology: true,
