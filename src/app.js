@@ -1,4 +1,5 @@
 /* 알파벳 순으로 import하는 습관 들이기  */
+import "@babel/polyfill";
 import "core-js";
 import express from "express";
 import morgan from "morgan";
