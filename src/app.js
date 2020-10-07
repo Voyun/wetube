@@ -9,6 +9,7 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import passport from "passport";
 import path from "path";
+import flash from "express-flash";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import { localsMiddleware } from "./middlewares";
@@ -50,6 +51,8 @@ app.use(
     store: new CokieStore({ mongooseConnection: mongoose.connection }),
   })
 );
+
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
