@@ -50,7 +50,9 @@
     "build:server": "babel src --out-dir build --ignore 'src/assets','src/static','src/webpack.config.js'",
     "copyAll": "shx cp -r src/static build && shx cp -r src/views build",
     "build": "npm run build:server && npm run build:assets && npm run copyAll",
-    "start": "PRODUCTION=true node build/init.js"
+    "prebuild": "shx rm -rf build",
+    "start": "PRODUCTION=true node build/init.js",
+    "prestart": "npm run build"
   },
   "devDependencies": {
     "eslint": "^7.8.1",
