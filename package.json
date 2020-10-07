@@ -47,9 +47,9 @@
     "dev:assets": "cd src && cross-env WEBPACK_ENV=development webpack -w",
     "build:assets": "cd src && cross-env WEBPACK_ENV=production webpack",
     "build:server": "babel src --out-dir build --ignore src/assets','src/static','src/webpack.config.js'",
-    "copyAll": "xcopy /e \"src/static\" \"build\" && xcopy /e \"src/views\" \"build/views\"",
+    "copyAll": "shx cp -r src/static build && shx cp -r src/views build",
     "build": "npm run build:server && npm run build:assets && npm run copyAll",
-    "prebuild": "rd /s \"build\"",
+    "prebuild": "shx rm -r build",
     "start": "node build/init.js"
   },
   "devDependencies": {
@@ -57,6 +57,7 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "nodemon": "^2.0.4",
-    "prettier": "^2.1.1"
+    "prettier": "^2.1.1",
+    "shx": "^0.3.2"
   }
 }
